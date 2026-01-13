@@ -1,4 +1,4 @@
-from ..data.userdata import save_user_data
+from app.data.userdata import save_user_data, load_user_data
 
 def signup():
     global firstname,lastname,password
@@ -7,14 +7,15 @@ def signup():
     lastname=input("Enter last name: ")
     password=input("Enter password: ")
     print(f"welcome to timetracker {firstname} {lastname}")
-    save_user_data(firstname, lastname, password )
+    save_user_data(firstname, lastname, password)
     return firstname,lastname,password
     
 def login():
     print("please login to your account")
     entredname=input("Enter your first name: ")
     entredpassword=input("Enter your password: ")
-    if entredpassword==password and entredname==firstname:
+    data=load_user_data()
+    if entredpassword==data["password"] and entredname==data["firstname"]:
         print("welcome back!")
     else:
         print("who you nigga?")
