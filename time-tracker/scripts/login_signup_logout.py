@@ -15,10 +15,13 @@ def login():
     entredname=input("Enter your first name: ")
     entredpassword=input("Enter your password: ")
     data=load_user_data()
+    if data is None:
+        print("No user data found. Please sign up first.")
+        return
     if entredpassword==data["password"] and entredname==data["firstname"]:
         print("welcome back!")
     else:
-        print("who you nigga?")
+        print("who you?")
 
 def is_user(): 
     print("do you have an account?")

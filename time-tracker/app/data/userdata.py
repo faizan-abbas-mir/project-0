@@ -13,6 +13,10 @@ def save_user_data(firstname, lastname, password ):
         json.dump(user_data,f) 
 
 def load_user_data():
-    with open(file_path, "r")as f:
-        data = json.load(f)
-    return data
+    try:
+        with open(file_path, "r")as f:
+            data = json.load(f)
+        return data
+    except FileNotFoundError:
+        print("User data not found")
+        return None
