@@ -18,12 +18,13 @@ def save_user_data(firstname, lastname, password ):
     with open(file_path,"w") as f:
         json.dump({"users":users},f,index=2)
 
-"""def load_user_data():
+def load_user_data():
     try:
         with open(file_path, "r")as f:
-            for line in f:
-                data = json.load(line)
-        return data
+            data=json.load(f)
+            users=data.get(users)
+        for users in users:
+            if user[firstname]==firstname:
+                return user
     except FileNotFoundError:
-        print("User data not found")
-        return None"""
+        return None
