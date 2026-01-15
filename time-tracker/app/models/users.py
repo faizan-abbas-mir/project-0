@@ -1,6 +1,6 @@
 #this folder contains user data
 import json
-class user:
+class User:
     def __init__(self,firstname,lastname,password):
         self.firstname=firstname
         self.lastname=lastname
@@ -15,15 +15,36 @@ class user:
             "lastname":self.lastname,
             "password":self.password
         }
-class usermanager:
-    def __init__(self,filepath,data):
+class UserManager:
+    def __init__(self,filepath):
         self.filepath=filepath
-        self.data=data
+        
 
-    def save_user(self):
+    def save_user(self,user):
         try:
-            with open(self.filepath,"a") as f:
-                self.data=json.load(f)
-            users=self.data.get("users",[]) 
+            with open(self.filepath,"r") as f:
+                data=json.load(f)
+            users=data.get("users",[]) 
         except FileNotFoundError:
             users=[]
+        users.append(user.to_dict())
+
+        with open(self.filepath,"w") as f:
+            json.dump({"users":users},f,indent=2)
+        
+    def find_user(self,firstname):
+        try:
+            with open(self.filename,"r") as f:
+                data=json.load(f)
+            users=data.get("users",[])
+            for user in users:
+                if user["firstname"]==firstname:
+                    return User(
+                        user["firstname"],
+                        user["lastname"],
+                        user["password"]
+                    )
+            return None
+        except FileNotFoundError:
+            return None
+
