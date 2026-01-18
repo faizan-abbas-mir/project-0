@@ -1,6 +1,6 @@
 "this file contains the Task model for the time-tracker application"
-from database.connection import con
-cursor=con.cursor()
+from database.connection import get_connection
+con, cursor = get_connection()
 
 class Tasks:
     def __init__(self,id,taskname,taskdescription,starttime,endtime,status):
@@ -16,4 +16,4 @@ class Tasks:
                        (self.id,self.taskname,self.taskdescription,self.starttime,self.endtime,self.status))
         con.commit()
 
-
+    

@@ -17,8 +17,7 @@ class UserManager:
         self.cursor.execute("INSERT INTO USERS(FIRSTNAME,LASTNAME,PASSWORD) VALUES(?,?,?)",
                        (user.firstname,user.lastname,user.password))
         con.commit()
-        
-    def find_user(self,firstname):
-        self.cursor.execute("SELECT * FROM USERS WHERE FIRSTNAME=?",firstname)
-        return self.cursor.fetchone
-    
+
+    def find_user(self,firstname,password):
+        self.cursor.execute("SELECT * FROM USERS WHERE FIRSTNAME=? AND PASSWORD=?", (firstname,password))
+        return self.cursor.fetchone()
