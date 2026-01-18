@@ -8,7 +8,6 @@ def setup_database(con):
     cursor.execute("CREATE TABLE IF NOT EXISTs TASKS ( ID INTEGER PRIMARY KEY AUTOINCREMENT, TASKNAME VARCHAR(20), DESCRIPTION VARCHAR(100), STARTTIME VARCHAR(20), ENDTIME VARCHAR(20))")
     con.commit()  
     con.close()  
-    return cursor
 
 def show_tables():
     con=get_connection()
@@ -22,5 +21,6 @@ def show_tables():
 
 if __name__ == "__main__":
     con=get_connection()
+    setup_database(con)
     show_tables()
     print("Database setup complete")
