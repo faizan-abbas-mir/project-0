@@ -24,3 +24,7 @@ class UserManager:
     def find_user(self,firstname,password):
         self.cursor.execute("SELECT * FROM USERS WHERE FIRSTNAME=? AND PASSWORD=?", (firstname,password))
         return self.cursor.fetchone()
+    def list_all_users(self):
+        self.cursor.execute("SELECT * FROM USERS")
+        return self.cursor.fetchall()
+    

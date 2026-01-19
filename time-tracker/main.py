@@ -4,7 +4,9 @@ from models.user import User,UserManager
 
 con=get_connection()
 setup_database(con)
-manager=UserManager(con)
+cursor=con.cursor()
+manager=UserManager(cursor)
+
 
 def signup():
     firstname=input("enter firstname: ")
@@ -17,12 +19,12 @@ def login():
     entered_password= input("enter password: ")
     return entered_firstname,entered_password
 
-user_input=input("doyou have an account? y/n \n")
+user_input=input("do you have an account? y/n \n")
 if user_input=="y":
     print("login function called")
     entered_firstname,entered_password=login()
     if manager.find_user(entered_firstname,entered_password):
-        print("welcome")
+        print(f"welcome")
     else:
         print("no user found")
     
@@ -31,6 +33,8 @@ elif user_input=="n":
     firstname,lastname,password=signup()
     user=User(firstname,lastname,password)
     manager.save_user(user)
+    print(f"User saved! All users: {manager.list_all_users()}")
+    con.commit()
     print("login function called")
     entered_firstname,entered_password=login()
     if manager.find_user(entered_firstname,entered_password):
