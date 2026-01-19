@@ -1,5 +1,8 @@
-from database.connection import con
-cursor=con.cursor()
+from database.connection import get_connection
+
+con = get_connection()
+cursor = con.cursor()
+
 class User:
     def __init__(self,firstname,lastname,password):
         self.firstname=firstname

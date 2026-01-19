@@ -3,15 +3,14 @@ from database.connection import get_connection,setup_database
 from models.user import User,UserManager
 
 con=get_connection()
-setup_database()
+setup_database(con)
+manager=UserManager(con)
 
 def signup():
     firstname=input("enter firstname: ")
     lastname=input("enter lastname: ")
     password= input("enter password: ")
     return firstname,lastname,password
-
-manager=UserManager(con)
 
 def login():
     entered_firstname=input("enter firstname: ")
