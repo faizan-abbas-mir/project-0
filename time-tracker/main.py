@@ -44,3 +44,8 @@ elif user_input=="n":
 
 con.close()
 
+input("what are you working on today?\n")
+print("sounds great... Lets add it to the task\n")
+
+def time_tracker(user,task):
+    pass
