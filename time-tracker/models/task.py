@@ -4,10 +4,11 @@ con = get_connection()
 from datetime import datetime
 
 class Task:
-    def __init__(self,user_id,taskname,taskdescription,status):
+    def __init__(self,user_id,taskname,taskdescription,category,status):
         self.user_id=user_id
         self.taskname=taskname
         self.taskdescription=taskdescription
+        self.category=category
         self.starttime=datetime.now()
         self.endtime=None
         self.status=status
@@ -29,6 +30,7 @@ class Task:
             "taskname":self.taskname,
             "description":self.taskdescription,
             "starttime":self.starttime.strftime("%Y-%m-%d %H:%M:%S"),
+            "category":self.category,
             "entime":self.endtime.strftime("%Y-%m-%d %H:%M:%S") if self.endtime else None
              }
     
@@ -38,9 +40,9 @@ class TaskManager:
 
     def save_task(self,task):
         cursor=self.con.cursor()
-        cursor.execute("INSERT INTO TASKS(USER_ID,TASKNAME,DESCRIPTION,STARTTIME,ENDTIME,STATUS) VALUES(?,?,?,?,?,?)",
-                        (task.user_id,task.taskname,task.taskdescription,task.starttime.strftime("%Y-%m-%d %H:%M:%S"),task.endtime.strftime("%Y-%m-%d %H:%M:%S") if task.endtime else None,task.status))
-        con.commit()
+        cursor.execute("INSERT INTO TASKS(USER_ID,TASKNAME,DESCRIPTION,CATEGORY,STARTTIME,ENDTIME,STATUS) VALUES(? ,?,?,?,?,?,?)",
+                        (task.user_id,task.taskname,task.taskdescription,task.category,task.starttime.strftime("%Y-%m-%d %H:%M:%S"),task.endtime.strftime("%Y-%m-%d %H:%M:%S") if task.endtime else None,task.status))
+        self.con.commit()
         
     def get_user_task(self,user_id):
         cursor=self.con.cursor()

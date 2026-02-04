@@ -55,15 +55,12 @@ while login_success==False:
         else:
             print("no user found")
 
-
-
-
-
 def new_task():
     taskname=input("what are you working on today?\n")
     print("sounds great... Lets add it to the task\n")
     description=input("enter the task description:\n")
-    task=Task(id,taskname,description,status="stating")
+    category=input("enter the task category:\n")
+    task=Task(id,taskname,description,category,status="stating")
     input("enter stop to stop duration of task")
     task.stop()
     taskmanager.save_task(task)
