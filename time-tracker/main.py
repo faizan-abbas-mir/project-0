@@ -1,77 +1,106 @@
-import sqlite3
-from database.connection import get_connection,setup_database
-from models.user import User,UserManager
-from models.task import Task,TaskManager
-
-con=get_connection()
-setup_database(con)
-cursor=con.cursor()
-manager=UserManager(cursor)
-taskmanager=TaskManager(con)
+from database.connection import get_connection, setup_database
+from models.user import User, UserManager
+from models.task import Task, TaskManager
 
 
 def signup():
-    firstname=input("enter firstname: ")
-    lastname=input("enter lastname: ")
-    password= input("enter password: ")
-    return firstname,lastname,password
+    firstname = input("Enter firstname: ")
+    lastname = input("Enter lastname: ")
+    password = input("Enter password: ")
+    return firstname, lastname, password
+
 
 def login():
-    entered_firstname=input("enter firstname: ")
-    entered_password= input("enter password: ")
-    return entered_firstname,entered_password
+    firstname = input("Enter firstname: ")
+    password = input("Enter password: ")
+    return firstname, password
 
-login_success=False
 
-while login_success==False:
-    user_input=input("do you have an account? y/n \n")
-    if user_input=="y":
-        print("login function called")
-        entered_firstname,entered_password=login()
-        if manager.find_user(entered_firstname,entered_password):
-            loggedin_user=manager.find_user(entered_firstname,entered_password)
-            id=loggedin_user[0]
-            print(f"welcome")
-            print(id)
-            login_success=True
+def authenticate(user_manager):
+    while True:
+        choice = input("Do you have an account? (y/n): ").lower()
+
+        if choice == "y":
+            firstname, password = login()
+            user = user_manager.find_user(firstname, password)
+            if user:
+                print(f"Welcome, {firstname}!")
+                return user[0]
+            print("Invalid credentials. Please try again.")
+
+        elif choice == "n":
+            firstname, lastname, password = signup()
+            user = User(firstname, lastname, password)
+            user_manager.save_user(user)
+            print(f"Account created for {firstname}!")
+
+            logged_in_user = user_manager.find_user(firstname, password)
+            if logged_in_user:
+                print(f"Welcome, {firstname}!")
+                return logged_in_user[0]
+
         else:
-            print("no user found")
-    
-    elif user_input=="n":
-        print("signup function called")
-        firstname,lastname,password=signup()
-        user=User(firstname,lastname,password)
-        manager.save_user(user)
-        print(f"User saved! All users: {manager.list_all_users()}")
-        con.commit()
-        print("login function called")
-        entered_firstname,entered_password=login()
-        if manager.find_user(entered_firstname,entered_password):
-            loggedin_user=manager.find_user(entered_firstname,entered_password)
-            id=loggedin_user[0]
-            print("welcome")
-            print(id)
-            login_success=True
-        else:
-            print("no user found")
+            print("Please enter 'y' or 'n'.")
 
-def new_task():
-    taskname=input("what are you working on today?\n")
-    print("sounds great... Lets add it to the task\n")
-    description=input("enter the task description:\n")
-    category=input("enter the task category:\n")
-    task=Task(id,taskname,description,category,status="stating")
-    input("enter stop to stop duration of task")
+
+def create_task(user_id, task_manager):
+    taskname = input("What are you working on today? ")
+    description = input("Enter task description: ")
+    category = input("Enter task category: ")
+
+    task = Task(user_id, taskname, description, category, status="started")
+    print(f"Task '{taskname}' started...")
+
+    input("Press Enter to stop the task: ")
     task.stop()
-    taskmanager.save_task(task)
-    con.commit()
-    print(f"task {taskname} started at {task.starttime} and ended at {task.endtime}")
 
-activity=input("enter n for new task and h for history\n")
-if activity=="h":
-    print(taskmanager.get_user_task(id))
-elif activity=="n":
-    new_task()
+    task_manager.save_task(task)
+    duration = task.get_duration()
+    print(f"Task '{taskname}' completed in {duration:.1f} seconds.")
+
+
+def show_task_history(user_id, task_manager):
+    tasks = task_manager.get_user_tasks(user_id)
+    if not tasks:
+        print("No tasks found.")
+        return
+
+    print("\n--- Task History ---")
+    for task in tasks:
+        taskname, description, category, starttime, endtime, status = task
+        print(f"  {taskname} [{category}] - {status}")
+        print(f"    {description}")
+        print(f"    Started: {starttime}, Ended: {endtime or 'In progress'}")
+    print()
+
+
+def main():
+    con = get_connection()
+    setup_database(con)
+
+    user_manager = UserManager(con)
+    task_manager = TaskManager(con)
+
+    user_id = authenticate(user_manager)
+
+    while True:
+        activity = input("Enter 'n' for new task, 'h' for history, 'q' to quit: ").lower()
+
+        if activity == "h":
+            show_task_history(user_id, task_manager)
+        elif activity == "n":
+            create_task(user_id, task_manager)
+        elif activity == "q":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid option. Please try again.")
+
+    con.close()
+
+
+if __name__ == "__main__":
+    main()
 
 
 
